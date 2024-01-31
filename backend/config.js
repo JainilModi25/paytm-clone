@@ -1,1 +1,1 @@
-export default JWT_SECRET = "my-secret";
+export const JWT_SECRET = "my-secret";
