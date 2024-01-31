@@ -1,0 +1,1 @@
+export default JWT_SECRET = "my-secret";
