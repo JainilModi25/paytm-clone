@@ -1,5 +1,6 @@
 import express from 'express';
 import signUpBody from '../types';
+import { signInBody } from '../types';
 import {User} from '../db'
 import JWT_SECRET from '../config';
 
@@ -11,22 +12,22 @@ router.get("/", (req,res) => {
 
 router.post("/signup", async (req,res) => {
     try {
-        const {success} = signUpBody.safeParseAsync(req.body)
-        if(!success){
-            return res.status(411).json({
-                message: "Email already taken/ incorrect inputs"
-            });
-        }
-
         const existingUser = await User.findOne({
             username: req.body.username
         });
 
         if(existingUser){
             res.status(411).json({
-              message: "Email already taken/Incorrect inputs",
+              message: "You've already registered!",
             });
         };
+
+        const {success} = signUpBody.safeParse(req.body)
+        if(!success){
+            return res.status(411).json({
+                message: "Incorrect inputs"
+            });
+        }
 
         const user = await User.create({
           username: req.body.username,
@@ -51,5 +52,41 @@ router.post("/signup", async (req,res) => {
         });
     }
 })
+
+
+router.post('/signin', async (req, res) => {
+    try {
+        const {success} = signInBody.safeParse(req.body)
+        if(!success){
+            res.status(411).send({
+                message: "This email or password does not match an account, Try again."
+            })
+        }
+
+        const user = await User.findOne({
+            username: req.body.username,
+            password: req.body.password
+        })
+
+        if (user) {
+        const token = jwt.sign({
+            userId: user._id
+        }, JWT_SECRET);
+  
+        res.json({
+            token: token
+        })
+    }
+
+    } catch (error) {
+        console.log("Error during signin: ", error);
+        res.status(500).send({
+            message: "Internal Server error"
+        })
+    }
+})
+
+
+
 
 export default router;

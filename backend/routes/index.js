@@ -1,7 +1,7 @@
 import express from 'express'
 import userRouter from './user.js'
 
-const router = express.Router()
+const router = express.Router()   //creates instance of router obj
 
 router.get('/', (req,res) => {
     try {

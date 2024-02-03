@@ -7,4 +7,9 @@ const signUpBody = zod.object({
   password: zod.string().min(6),
 });
 
-export default signUpBody;
+const signInBody = zod.object({
+  username: zod.string().email(),
+  password: zod.string(),
+});
+
+export {signUpBody,signInBody}
