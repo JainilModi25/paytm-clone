@@ -1,8 +1,8 @@
 import express from 'express';
-import signUpBody from '../types';
-import { signInBody } from '../types';
-import {User} from '../db'
+import { signUpBody, signInBody, updateBody } from '../types';
+import { User } from '../db'
 import JWT_SECRET from '../config';
+import authMiddleware from '../middleware';
 
 const router = express.Router()
 
@@ -17,7 +17,7 @@ router.post("/signup", async (req,res) => {
         });
 
         if(existingUser){
-            res.status(411).json({
+            return res.status(411).json({
               message: "You've already registered!",
             });
         };
@@ -41,13 +41,13 @@ router.post("/signup", async (req,res) => {
             userId
         }, JWT_SECRET);
 
-        res.json({
+        return res.json({
             message: "User created successfully.",
             token: token
         })
     } catch (error) {
         console.log("Error during user signup: ", error);
-        res.status(500).json({
+        return res.status(500).json({
             message: "Internal server error"
         });
     }
@@ -58,7 +58,7 @@ router.post('/signin', async (req, res) => {
     try {
         const {success} = signInBody.safeParse(req.body)
         if(!success){
-            res.status(411).send({
+            return res.status(411).json({
                 message: "This email or password does not match an account, Try again."
             })
         }
@@ -76,6 +76,7 @@ router.post('/signin', async (req, res) => {
         res.json({
             token: token
         })
+        return;
     }
 
     } catch (error) {
@@ -87,6 +88,29 @@ router.post('/signin', async (req, res) => {
 })
 
 
+router.put('/', authMiddleware, async (req, res) => {
+    try {
+        const {success} = updateBody.safeParse(req.body);
+        if(!success){
+            res.status(411).json({
+                message: "Error while updating info"
+            })
+        }
+
+        await User.updateOne(req.body, {
+            _id: req.userId
+        })
+
+        return res.json({
+            message: "Updated successfully"
+        })
+        
+    } catch (error) {
+        return res.status(500).json({
+            message: "Internal server error"
+        })
+    }
+})
 
 
 export default router;
