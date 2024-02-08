@@ -1,5 +1,5 @@
-import { JWT_SECRET } from "./config";
-import { jwt } from "jsonwebtoken";
+import JWT_SECRET from "./config.js";
+import jwt from "jsonwebtoken";
 
 const authMiddleware = (req, res, next) => {
     try {

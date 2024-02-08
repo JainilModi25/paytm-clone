@@ -1,13 +1,21 @@
 import express from 'express';
-import { signUpBody, signInBody, updateBody } from '../types';
-import { User, Account } from '../db'
-import JWT_SECRET from '../config';
-import authMiddleware from '../middleware';
+import { signUpBody, signInBody, updateBody } from '../types.js';
+import { User, Account } from '../db.js';
+import JWT_SECRET from '../config.js';
+import authMiddleware from '../middleware.js';
+import jwt from 'jsonwebtoken';
 
 const router = express.Router()
 
 router.get("/", (req,res) => {
-    res.send("Hello World")
+    try {
+        res.send("Hello World")
+        
+    } catch (error) {
+        res.status(500).json({
+            message: "Internal Server Error"
+        })    
+    } 
 })
 
 router.post("/signup", async (req,res) => {
@@ -35,13 +43,13 @@ router.post("/signup", async (req,res) => {
           firstName: req.body.firstName,
           lastName: req.body.lastName,
         });
-
+        
+        const userId = user._id;
         await Account.create({
            userId,
            balance: 1 + Math.random() * 10000,
          });
 
-        const userId = user._id;
         const token = jwt.sign({
             userId
         }, JWT_SECRET);
@@ -152,4 +160,4 @@ router.get('/bulk', async (req, res) => {
     }
 })
 
-export default router;
+export {router as userRouter}
