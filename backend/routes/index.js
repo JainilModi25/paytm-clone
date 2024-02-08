@@ -1,5 +1,6 @@
 import express from 'express'
-import userRouter from './user.js'
+import { userRouter } from './user.js'
+import { accountRouter } from './account.js'
 
 const router = express.Router()   //creates instance of router obj
 
@@ -16,6 +17,7 @@ router.get('/', (req,res) => {
 })
 
 router.use("/user", userRouter);
+router.use("/account", accountRouter);
 
 
 export default router

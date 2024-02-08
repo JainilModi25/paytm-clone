@@ -1,6 +1,6 @@
 import express from 'express';
 import { signUpBody, signInBody, updateBody } from '../types';
-import { User } from '../db'
+import { User, Account } from '../db'
 import JWT_SECRET from '../config';
 import authMiddleware from '../middleware';
 
@@ -35,6 +35,11 @@ router.post("/signup", async (req,res) => {
           firstName: req.body.firstName,
           lastName: req.body.lastName,
         });
+
+        await Account.create({
+           userId,
+           balance: 1 + Math.random() * 10000,
+         });
 
         const userId = user._id;
         const token = jwt.sign({
