@@ -4,27 +4,25 @@ import { useNavigate } from "react-router-dom";
 export const Home = () => {
   const navigate = useNavigate();
   return (
-    <div>
-      <br>
-        <br></br>
-      </br>
-      <Button
+    <>
+        <div>
+        <br/><br/>
+        <Button
         label={"Go to signup"}
         onPress={async () => {
           navigate("/signup");
         }}
       />
-      <div>
-        <br>
-          <br></br>
-        </br>
       </div>
+      <div>
+        <br/><br/>
       <Button
         label={"Go to signin"}
         onPress={async () => {
-          navigate("/signin");
+            navigate("/signin");
         }}
-      />
-    </div>
-  );
-};
+        />
+        </div>
+    </>
+  )
+    }
